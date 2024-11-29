@@ -49,12 +49,12 @@ def remove_first_pages(raw_pdf_elements):
             new_pdf_elements.extend([e for e in raw_pdf_elements[i+1:]])
             return new_pdf_elements
 
-def remove_header_image(pdf_elements_wo_start):
+def remove_header_image(pdf_elements_wo_start, header_image_names):
     to_remove = set()
     number_of_total_elements = len(pdf_elements_wo_start)
     for i, element in enumerate(pdf_elements_wo_start):
         if i == 0:
-            if element.category == "Image" and ("Allscripts" in element.text or "Altera" in element.text):
+            if element.category == "Image" and any(name in element.text for name in header_image_names):
                 to_remove.add(i)
             else:
                 continue
@@ -62,7 +62,7 @@ def remove_header_image(pdf_elements_wo_start):
             # Ensure we don't go out of bounds
             if i + 1 < number_of_total_elements:
                 next_element = pdf_elements_wo_start[i + 1]
-                if next_element.category == "Image" and ("Allscripts" in next_element.text or "Altera" in next_element.text):
+                if next_element.category == "Image" and any(name in element.text for name in header_image_names):
                     to_remove.add(i + 1)
                 else:
                     continue
